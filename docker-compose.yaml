@@ -1,5 +1,6 @@
 services:
   db:
+    #montar automtica¿mente la imagen de postgres
     image: postgres:latest
     container_name: postgres
     ports:
@@ -8,6 +9,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: postgres
+    restart: always
 
   app:
     build:
@@ -32,3 +34,17 @@ services:
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: true
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: true
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED: true
+    restart: always
+
+  server:
+    #nginx
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+        - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+        - app
+        - db
+    restart: always
